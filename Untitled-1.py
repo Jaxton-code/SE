@@ -1,4 +1,5 @@
 import requests # type: ignore
+import json
 
 # Spotify API 凭据（用你的 client_id 和 client_secret 替换）
 CLIENT_ID = "618dc1d561664b3883dc34f734105f34"
@@ -36,3 +37,5 @@ if ACCESS_TOKEN:
     print(response.json())  # 打印返回的数据
 else:
     print("Failed to get access token.")
+
+print(json.dumps(response.json(), indent=4))

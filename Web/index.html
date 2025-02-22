@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BikeMap Dublin</title>
+    <link rel="stylesheet" href="./css/dublinbike.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0c_tPCFVOTqCfC6hbjakRu2fHYEHA3_8"></script>
+    <script src="./js/dublinbike.js" defer></script>
+</head>
+
+<body>
+<header>
+    <div class="header-container">
+        <h1>BikeMap Dublin</h1>
+        <img src="./images/dublinbikes_logo.png" alt="Dublin Bikes Logo" class="logo">
+    </div>
+</header>
+
+<div class="main-container">
+    <!-- 左侧侧边栏 -->
+    <div class="sidebar">
+        <h2>Station & Weather Details</h2>
+
+        <!-- 📍 站点详情卡片 -->
+        <div id="stationDetail" class="detail-card">
+            <h3>Station Details</h3>
+            <p>Select a station on the map to view details.</p>
+        </div>
+
+        <!-- 🌤️ 天气信息卡片 -->
+        <div id="weatherInfo" class="detail-card">
+            <h3>Dublin Weather</h3>
+            <p><strong>🌡️ Temperature:</strong> <span id="temp">Loading...</span></p>
+            <p><strong>🤔 Feels Like:</strong> <span id="tempFeel">Loading...</span></p>
+            <p><strong>🌥️ Condition:</strong> <span id="condition">Loading...</span></p>
+            <p><strong>💨 Wind Speed:</strong> <span id="wind">Loading...</span></p>
+            <p><strong>☁️ Cloud Coverage:</strong> <span id="clouds">Loading...</span></p>
+            <p><strong>🌅 Sunrise:</strong> <span id="sunrise">Loading...</span></p>
+            <p><strong>🌇 Sunset:</strong> <span id="sunset">Loading...</span></p>
+        </div>
+    </div>
+
+    <!-- 地图容器 -->
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+</div>
+</body>
+
+</html>

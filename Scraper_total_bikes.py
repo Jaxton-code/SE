@@ -91,9 +91,16 @@ def availability_to_db(api_text, engine):
 
 
 def backup_table_to_csv(engine, table_name, output_folder):
-    # Query the table data
+   
+    today_str = datetime.datetime.now().strftime('%Y-%m-%d')
+    sql_query = text(f"""
+        SELECT * FROM {table_name}
+        WHERE DATE(last_update) = :today
+    """)
+    
+    
     with engine.connect() as conn:
-        result = conn.execute(text(f"SELECT * FROM {table_name}"))
+        result = conn.execute(sql_query, {"today": today_str})
         rows = result.fetchall()
         keys = result.keys()
     
@@ -108,6 +115,7 @@ def backup_table_to_csv(engine, table_name, output_folder):
         writer.writerows(rows)
     
     print(f"Backup of '{table_name}' saved to {filepath}")
+
 
 
 ###################### Connect to the DB ######################

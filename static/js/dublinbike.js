@@ -55,18 +55,17 @@ $(document).ready(function () {
     // 加载天气信息 (API: /api/weather)
     async function loadWeather() {
         try {
-            const response = await fetch('/api/weather'); // 获取天气信息
+            const response = await fetch('/api/weather');
             const weather = await response.json();
-
-            // 更新天气信息到界面
+    
+            // Update the weather information on the page
             $('#temp').text(`${weather.temp}°C`);
             $('#tempFeel').text(`${weather.temp_feel}°C`);
             $('#condition').text(weather.weather_main);
             $('#wind').text(`${weather.wind_speed} m/s`);
             $('#clouds').text(`${weather.clouds}%`);
-            $('#sunrise').text(new Date(weather.sunrise).toLocaleTimeString());
-            $('#sunset').text(new Date(weather.sunset).toLocaleTimeString());
-
+            $('#sunrise').text(weather.sunrise);
+            $('#sunset').text(weather.sunset);
         } catch (error) {
             console.error("Failed to load weather:", error);
         }
@@ -86,7 +85,8 @@ $(document).ready(function () {
         `);
         map.setCenter({ lat: station.position_lat, lng: station.position_lng });
     }
-
+    setInterval(loadWeather, 3600000);  // pull weather every hour
+    setInterval(loadStations,60000) // bull biked every minute
     // 初始化地图
     initMap();
 });

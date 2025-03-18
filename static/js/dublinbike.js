@@ -1,35 +1,38 @@
 $(document).ready(function () {
     let map;
     let markers = [];
+    let userMarker = null;
 
-    // 获取不同颜色的 Marker
     function getMarkerIcon(bikeCount) {
         if (bikeCount === 0) {
-            return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; // 无车时红色
+            return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; 
         } else if (bikeCount <= 4) {
-            return "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"; // 车少时黄色
+            return "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"; 
         } else {
-            return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; // 车多时绿色
+            return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; 
         }
     }
 
-    // 初始化地图
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 13,
-            center: { lat: 53.3498, lng: -6.2603 } // 都柏林中心位置
+            center: { lat: 53.3498, lng: -6.2603 }
         });
-        loadStations();  // 加载站点
-        loadWeather();   // 加载天气
-    }
 
-    // 加载站点信息 (API: /api/stations)
+        loadStations();
+        loadWeather();
+        getLocation();  // Automatically find user location when the map loads
+
+        setInterval(loadWeather, 3600000);  // Refresh weather every hour
+        setInterval(loadStations, 60000);  // Refresh stations every minute
+    }
+    let stations = []
     async function loadStations() {
         try {
-            const response = await fetch('/api/stations'); // 通过后端 API 获取数据
-            const stations = await response.json();
+            const response = await fetch('/api/stations');
+            stations = await response.json();
 
-            markers.forEach(marker => marker.setMap(null)); // 清除旧标记
+            markers.forEach(marker => marker.setMap(null)); 
             markers = [];
 
             stations.forEach(station => {
@@ -40,7 +43,6 @@ $(document).ready(function () {
                     title: station.name
                 });
 
-                // 点击标记显示站点详情
                 marker.addListener('click', () => {
                     displayStationDetail(station);
                 });
@@ -52,13 +54,11 @@ $(document).ready(function () {
         }
     }
 
-    // 加载天气信息 (API: /api/weather)
     async function loadWeather() {
         try {
             const response = await fetch('/api/weather');
             const weather = await response.json();
-    
-            // Update the weather information on the page
+
             $('#temp').text(`${weather.temp}°C`);
             $('#tempFeel').text(`${weather.temp_feel}°C`);
             $('#condition').text(weather.weather_main);
@@ -71,7 +71,6 @@ $(document).ready(function () {
         }
     }
 
-    // 显示站点详情
     function displayStationDetail(station) {
         $('#stationDetail').html(`
             <div class="station-detail-card">
@@ -85,8 +84,113 @@ $(document).ready(function () {
         `);
         map.setCenter({ lat: station.position_lat, lng: station.position_lng });
     }
-    setInterval(loadWeather, 3600000);  // pull weather every hour
-    setInterval(loadStations,60000) // bull biked every minute
-    // 初始化地图
+
+
+    function displayNearestStationDetail(station ,distance) {
+        $('#stationDetail').html(`
+            <div class="station-detail-card">
+                <h3>${station.name} <br> This is your nearest Bike Station! </br> </h3>
+                <p><strong>Address:</strong> ${station.address}</p>
+                <p><strong>Bikes Available:</strong> ${station.available_bikes}</p>
+                <p><strong>Stands Available:</strong> ${station.available_bike_stands}</p>
+                <p><strong>Status:</strong> ${station.status}</p>
+                <p><strong>Location:</strong> (${station.position_lat}, ${station.position_lng})</p>
+                <p><strong> Distance:</strong> ${distance.toFixed(2)} km</p>
+            </div>
+        `);
+        map.setCenter({ lat: station.position_lat, lng: station.position_lng });
+    }
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                showPosition, 
+                showError, 
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    }
+    function showPosition(position) {
+        const userLat = position.coords.latitude;
+        const userLong = position.coords.longitude;
+        console.log("User Location: ", userLat, userLong);
+
+        if (userMarker){
+            userMarker.setPosition({lat: userLat, lng: userLong});
+        } else {
+            userMarker = new google.maps.Marker({
+                position: { lat: userLat, lng: userLong },
+                map: map,
+                icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                    scaledSize: new google.maps.Size(40, 40)
+                },
+                title: "Your Location",
+                zIndex: 1000 // Make sure user marker appears above other markers
+            });
+        }
+
+        findNearestStation(userLat, userLong);
+    }
+
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                console.error("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                console.error("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                console.error("The request to get user location timed out.");
+                break;
+            default:
+                console.error("An unknown error occurred.");
+                break;
+        }
+    }
+
+    function getDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371; 
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLng = (lng2 - lng1) * (Math.PI / 180);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function findNearestStation(userLat, userLong) {
+        let nearestStation = null;
+        let minDistance = Infinity;
+        let nearestStationData = null;
+
+        markers.forEach( marker => {
+            const stationLat = marker.getPosition().lat();
+            const stationLng = marker.getPosition().lng();
+            const distance = getDistance(userLat, userLong, stationLat, stationLng);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestStation = marker;
+
+                nearestStationData = stations.find(station =>
+                station.position_lat === stationLat &&
+                station.position_lng === stationLng
+                );
+                
+            }
+        });
+
+        if (nearestStation) {
+            console.log("Nearest Station:", nearestStation.getTitle());
+            map.setCenter(nearestStation.getPosition());
+            nearestStation.setAnimation(google.maps.Animation.BOUNCE);
+            displayNearestStationDetail(nearestStationData, minDistance)
+        }
+    }
+
     initMap();
 });

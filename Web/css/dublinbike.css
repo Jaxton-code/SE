@@ -122,3 +122,40 @@ body {
         height: auto;
     }
 }
+/* 用户信息模块 */
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #4a90e2;
+}
+
+.user-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #4a90e2;
+}
+
+.logout-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.logout-btn:hover {
+    background-color: #e60000;
+}
+

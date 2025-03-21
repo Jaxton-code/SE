@@ -1,0 +1,94 @@
+/* 🌤️ 清新现代的背景 */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #dfefff, #a0c4ff); /* 浅蓝色渐变 */
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+/* 📌 登录容器（玻璃 UI + 高级阴影） */
+.login-container {
+    background: rgba(255, 255, 255, 0.4); /* 半透明 */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px); /* 模糊玻璃效果 */
+    text-align: center;
+    width: 320px;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* 🚀 渐入动画 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #1a237e;
+}
+
+/* ✨ 温馨提示文本 */
+.welcome-text {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+/* 📌 登录按钮 */
+.login-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50px;
+    margin-top: 10px;
+    transition: 0.3s;
+    display: block;
+    width: 100%;
+}
+
+.login-btn:hover {
+    background-color: #357abd;
+}
+
+/* 🚀 登出按钮 */
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    display: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+/* 🎨 响应式设计 */
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%;
+        padding: 30px;
+    }
+
+    .login-btn, .logout-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

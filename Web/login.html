@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - BikeMap Dublin</title>
+  <link rel="stylesheet" href="./css/login.css">
+
+  <!-- 🔥 Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+    // 🔥 Firebase 配置
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzclffq1g197mt6lwqxYl_s-KYd5quzDA",
+      authDomain: "dublinbike-e7b00.firebaseapp.com",
+      projectId: "dublinbike-e7b00",
+      storageBucket: "dublinbike-e7b00.firebasestorage.app",
+      messagingSenderId: "921855682206",
+      appId: "1:921855682206:web:0fa098c3e8b75bc9a23d8f",
+      measurementId: "G-HTNX219YE4"
+    };
+
+    // 🔥 初始化 Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("login-btn").addEventListener("click", function () {
+        signInWithPopup(auth, provider)
+                .then((result) => {
+                  const user = result.user;
+                  alert(`Welcome, ${user.displayName}!`);
+                  localStorage.setItem("google_user", JSON.stringify(user));
+                  window.location.href = "index.html"; // 登录成功后跳转
+                })
+                .catch((error) => {
+                  console.error("Login failed:", error);
+                });
+      });
+
+      // 🔹 监听用户登录状态
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          document.getElementById("login-btn").style.display = "none";
+          document.getElementById("logout-btn").style.display = "block";
+        }
+      });
+
+      // 🔹 登出
+      document.getElementById("logout-btn").addEventListener("click", function () {
+        signOut(auth).then(() => {
+          localStorage.removeItem("google_user");
+          alert("Logged out!");
+          location.reload();
+        }).catch((error) => {
+          console.error("Logout failed:", error);
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+<div class="login-container">
+  <h2>BikeMap Dublin</h2>
+  <p class="welcome-text">Welcome! Please sign in to continue.</p>
+  <button id="login-btn" class="login-btn">Sign in with Google</button>
+  <button id="logout-btn" class="logout-btn">Logout</button>
+</div>
+</body>
+</html>

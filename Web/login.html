@@ -11,7 +11,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
-    // 🔥 Firebase 配置
+    // 🔥 Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBzclffq1g197mt6lwqxYl_s-KYd5quzDA",
       authDomain: "dublinbike-e7b00.firebaseapp.com",
@@ -22,7 +22,7 @@
       measurementId: "G-HTNX219YE4"
     };
 
-    // 🔥 初始化 Firebase
+    // 🔥 Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
@@ -34,14 +34,14 @@
                   const user = result.user;
                   alert(`Welcome, ${user.displayName}!`);
                   localStorage.setItem("google_user", JSON.stringify(user));
-                  window.location.href = "index.html"; // 登录成功后跳转
+                  window.location.href = "index.html"; // Redirect after successful login
                 })
                 .catch((error) => {
                   console.error("Login failed:", error);
                 });
       });
 
-      // 🔹 监听用户登录状态
+      // 🔹 Monitor login status
       onAuthStateChanged(auth, (user) => {
         if (user) {
           document.getElementById("login-btn").style.display = "none";
@@ -49,7 +49,7 @@
         }
       });
 
-      // 🔹 登出
+      // 🔹 Logout
       document.getElementById("logout-btn").addEventListener("click", function () {
         signOut(auth).then(() => {
           localStorage.removeItem("google_user");
@@ -72,3 +72,4 @@
 </div>
 </body>
 </html>
+

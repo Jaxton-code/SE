@@ -2,34 +2,34 @@ $(document).ready(function () {
     let map;
     let markers = [];
 
-    // 获取不同颜色的 Marker
+    // Get marker icon based on number of available bikes
     function getMarkerIcon(bikeCount) {
         if (bikeCount === 0) {
-            return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; // 无车时红色
+            return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; // Red when no bikes
         } else if (bikeCount <= 4) {
-            return "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"; // 车少时黄色
+            return "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"; // Yellow when few bikes
         } else {
-            return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; // 车多时绿色
+            return "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; // Green when many bikes
         }
     }
 
-    // 初始化地图
+    // Initialize the map
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 13,
-            center: { lat: 53.3498, lng: -6.2603 } // 都柏林中心位置
+            center: { lat: 53.3498, lng: -6.2603 } // Dublin city center
         });
-        loadStations();  // 加载站点
-        loadWeather();   // 加载天气
+        loadStations();  // Load station data
+        loadWeather();   // Load weather data
     }
 
-    // 加载站点信息 (API: /api/stations)
+    // Load station data from API (API: /api/stations)
     async function loadStations() {
         try {
-            const response = await fetch('/api/stations'); // 通过后端 API 获取数据
+            const response = await fetch('/api/stations'); // Fetch data from backend API
             const stations = await response.json();
 
-            markers.forEach(marker => marker.setMap(null)); // 清除旧标记
+            markers.forEach(marker => marker.setMap(null)); // Clear old markers
             markers = [];
 
             stations.forEach(station => {
@@ -40,7 +40,7 @@ $(document).ready(function () {
                     title: station.name
                 });
 
-                // 点击标记显示站点详情
+                // Show station details when marker is clicked
                 marker.addListener('click', () => {
                     displayStationDetail(station);
                 });
@@ -52,13 +52,13 @@ $(document).ready(function () {
         }
     }
 
-    // 加载天气信息 (API: /api/weather)
+    // Load weather data from API (API: /api/weather)
     async function loadWeather() {
         try {
-            const response = await fetch('/api/weather'); // 获取天气信息
+            const response = await fetch('/api/weather'); // Fetch weather data
             const weather = await response.json();
 
-            // 更新天气信息到界面
+            // Update weather info on the interface
             $('#temp').text(`${weather.temp}°C`);
             $('#tempFeel').text(`${weather.temp_feel}°C`);
             $('#condition').text(weather.weather_main);
@@ -72,7 +72,7 @@ $(document).ready(function () {
         }
     }
 
-    // 显示站点详情
+    // Display selected station details
     function displayStationDetail(station) {
         $('#stationDetail').html(`
             <div class="station-detail-card">
@@ -87,6 +87,6 @@ $(document).ready(function () {
         map.setCenter({ lat: station.position_lat, lng: station.position_lng });
     }
 
-    // 初始化地图
+    // Call map initializer
     initMap();
 });

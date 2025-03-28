@@ -62,7 +62,7 @@ body {
     overflow: hidden;
 }
 
-/* 等高卡片样式 */
+/* Equal-height card style */
 .detail-card {
     flex: 1;
     padding: 15px;
@@ -72,7 +72,7 @@ body {
     overflow-y: auto;
 }
 
-/* 侧边栏标题样式 */
+/* Sidebar title style */
 .sidebar h2 {
     margin: 0 0 10px 0;
     font-size: 1.8em;
@@ -122,7 +122,8 @@ body {
         height: auto;
     }
 }
-/* 用户信息模块 */
+
+/* User Info Module */
 .user-container {
     display: flex;
     align-items: center;

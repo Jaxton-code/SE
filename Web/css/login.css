@@ -1,28 +1,28 @@
-/* 🌤️ 清新现代的背景 */
+/* 🌤️ Fresh modern background */
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: linear-gradient(to bottom, #dfefff, #a0c4ff); /* 浅蓝色渐变 */
+    background: linear-gradient(to bottom, #dfefff, #a0c4ff); /* Light blue gradient */
     font-family: 'Arial', sans-serif;
     color: #333;
 }
 
-/* 📌 登录容器（玻璃 UI + 高级阴影） */
+/* 📌 Login container (Glassmorphism + advanced shadow) */
 .login-container {
-    background: rgba(255, 255, 255, 0.4); /* 半透明 */
+    background: rgba(255, 255, 255, 0.4); /* Semi-transparent */
     padding: 40px;
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(12px); /* 模糊玻璃效果 */
+    backdrop-filter: blur(12px); /* Glass blur effect */
     text-align: center;
     width: 320px;
     animation: fadeIn 0.8s ease-in-out;
 }
 
-/* 🚀 渐入动画 */
+/* 🚀 Fade-in animation */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -34,7 +34,7 @@ body {
     color: #1a237e;
 }
 
-/* ✨ 温馨提示文本 */
+/* ✨ Friendly welcome text */
 .welcome-text {
     font-size: 1em;
     color: #333;
@@ -42,7 +42,7 @@ body {
     opacity: 0.8;
 }
 
-/* 📌 登录按钮 */
+/* 📌 Login button */
 .login-btn {
     background-color: #4a90e2;
     color: white;
@@ -61,7 +61,7 @@ body {
     background-color: #357abd;
 }
 
-/* 🚀 登出按钮 */
+/* 🚀 Logout button */
 .logout-btn {
     background-color: #e74c3c;
     color: white;
@@ -80,7 +80,7 @@ body {
     background-color: #c0392b;
 }
 
-/* 🎨 响应式设计 */
+/* 🎨 Responsive design */
 @media (max-width: 768px) {
     .login-container {
         width: 90%;

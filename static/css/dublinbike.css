@@ -62,7 +62,7 @@ body {
     overflow: hidden;
 }
 
-/* 等高卡片样式 */
+/* Equal-height card style */
 .detail-card {
     flex: 1;
     padding: 15px;
@@ -72,7 +72,7 @@ body {
     overflow-y: auto;
 }
 
-/* 侧边栏标题样式 */
+/* Sidebar heading style */
 .sidebar h2 {
     margin: 0 0 10px 0;
     font-size: 1.8em;
@@ -121,4 +121,41 @@ body {
         padding: 10px;
         height: auto;
     }
+}
+
+/* User Info Section */
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #4a90e2;
+}
+
+.user-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #4a90e2;
+}
+
+.logout-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.logout-btn:hover {
+    background-color: #e60000;
 }

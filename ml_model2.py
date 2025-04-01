@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import numpy as np
+from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
@@ -104,7 +105,7 @@ if 'timestamp' in bike_df.columns and 'timestamp' in weather_df.columns:
 
     
     # Target Variable (Predict Next Snapshot of Available Bikes)
-    merged_df['target'] = merged_df['available_bikes'].shift(-1)
+    merged_df['target'] = merged_df['available_bikes']
     
     # Drop Rows with Missing Target
     merged_df.dropna(inplace=True)
@@ -125,15 +126,12 @@ if 'timestamp' in bike_df.columns and 'timestamp' in weather_df.columns:
 
 
 
-    # Optional: Save merged and processed data for future use (e.g., visualization)
-    merged_df.to_csv("merged_bike_weather.csv", index=False)
-    print("Saved merged data to 'merged_bike_weather.csv'")
 
 
     # STAGE 1: TUNING WITH SAMPLE
     print("\n=== STAGE 1: Hyperparameter Tuning with Sample ===")
     # Create a smaller sample for hyperparameter tuning
-    sample_size = 200000  # Adjust based on your computational resources
+    sample_size = 200000  # Adjust based  computational resources
     print(f"Creating sample of {sample_size} rows for hyperparameter tuning")
     merged_df_sample = merged_df.sample(n=sample_size, random_state=42)
     

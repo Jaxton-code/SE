@@ -2,6 +2,8 @@ $(document).ready(function () {
     let map;
     let markers = [];
     let userMarker = null;
+    let trendChartInstance;  
+
 
     function getMarkerIcon(bikeCount) {
         if (bikeCount === 0) {
@@ -21,7 +23,7 @@ $(document).ready(function () {
 
         loadStations();
         loadWeather();
-        getLocation();  // Automatically find user location when the map loads
+        // getLocation();  // Automatically find user location when the map loads
 
         setInterval(loadWeather, 3600000);  // Refresh weather every hour
         setInterval(loadStations, 60000);  // Refresh stations every minute
@@ -49,6 +51,8 @@ $(document).ready(function () {
 
                 markers.push(marker);
             });
+
+            getLocation();
         } catch (error) {
             console.error("Failed to load stations:", error);
         }
@@ -72,6 +76,7 @@ $(document).ready(function () {
     }
 
     function displayStationDetail(station) {
+        console.log("Station clicked:", station.name);
         $('#stationDetail').html(`
             <div class="station-detail-card">
                 <h3>${station.name}</h3>
@@ -83,6 +88,7 @@ $(document).ready(function () {
             </div>
         `);
         map.setCenter({ lat: station.position_lat, lng: station.position_lng });
+        loadTrendChart(station.name);
     }
 
 
@@ -112,6 +118,7 @@ $(document).ready(function () {
         }
     }
     function showPosition(position) {
+        console.log("showPosition() called with:", position.coords);
         const userLat = position.coords.latitude;
         const userLong = position.coords.longitude;
         console.log("User Location: ", userLat, userLong);
@@ -163,6 +170,8 @@ $(document).ready(function () {
     }
 
     function findNearestStation(userLat, userLong) {
+        console.log(" findNearestStation() called with:", userLat, userLong);
+    console.log(" Checking against", markers.length, "station markers");
         let nearestStation = null;
         let minDistance = Infinity;
         let nearestStationData = null;
@@ -189,8 +198,80 @@ $(document).ready(function () {
             map.setCenter(nearestStation.getPosition());
             nearestStation.setAnimation(google.maps.Animation.BOUNCE);
             displayNearestStationDetail(nearestStationData, minDistance)
+        }  else {
+            console.log(" No nearest station found.");
         }
     }
+
+
+    async function loadTrendChart(stationName) {
+        console.log("Chart triggered for:", stationName);
+        try {
+            const response = await fetch(`/api/trend/${stationName}`);
+            const trend = await response.json();
+    
+            if (!trend.labels || !trend.values || trend.values.length === 0) {
+                console.warn("No trend data to display.");
+                return;
+            }
+    
+            const ctx = document.getElementById('trendChart').getContext('2d');
+    
+            // Destroy old chart instance if it exists
+            if (trendChartInstance) {
+                trendChartInstance.destroy();
+            }
+    
+            // Create new chart
+            trendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trend.labels,
+                    datasets: [{
+                        label: `Available Bikes (${stationName})`,
+                        data: trend.values,
+                        fill: true,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.3,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: .8,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Bikes Available'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (past 24h)'
+                            },
+                            ticks: {
+                                maxTicksLimit: 10
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+    
+        } catch (error) {
+            console.error("Failed to load trend chart:", error);
+        }
+    }
+    
 
     initMap();
 });

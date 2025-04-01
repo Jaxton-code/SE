@@ -8,6 +8,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0c_tPCFVOTqCfC6hbjakRu2fHYEHA3_8"></script>
     <script src="{{ url_for('static', filename='js/dublinbike.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 
 <!-- Firebase -->
@@ -31,22 +33,22 @@
     const auth = getAuth(app);
 
     // Monitor user login state
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById("user-info").innerHTML = `
-                <img src="${user.photoURL || 'images/default-avatar.png'}" alt="User Avatar" class="user-avatar">
-                <span class="user-name">${user.displayName}</span>
-                <button id="logout-btn" class="logout-btn">Logout</button>
-            `;
-            document.getElementById("logout-btn").addEventListener("click", function () {
-                signOut(auth).then(() => {
-                    window.location.href = "/login"; // Redirect to login page after logout
-                }).catch((error) => console.error("Logout failed:", error));
-            });
-        } else {
-            window.location.href = "/login"; // Redirect to login page if not logged in
-        }
-    });
+    // onAuthStateChanged(auth, (user) => {
+    //     if (user) {
+    //         document.getElementById("user-info").innerHTML = `
+    //             <img src="${user.photoURL || 'images/default-avatar.png'}" alt="User Avatar" class="user-avatar">
+    //             <span class="user-name">${user.displayName}</span>
+    //             <button id="logout-btn" class="logout-btn">Logout</button>
+    //         `;
+    //         document.getElementById("logout-btn").addEventListener("click", function () {
+    //             signOut(auth).then(() => {
+    //                 window.location.href = "/login"; // Redirect to login page after logout
+    //             }).catch((error) => console.error("Logout failed:", error));
+    //         });
+    //     } else {
+    //         window.location.href = "/login"; // Redirect to login page if not logged in
+    //     }
+    // });
 </script>
 
 
@@ -86,6 +88,8 @@
     <div class="map-container">
         <div id="map"></div>
     </div>
+    <div class='chart-container'><h3>Availability Trend (last 24h)</h3>
+        <canvas id="trendChart" height="150"></canvas></div>
 </div>
 </body>
 

@@ -3,14 +3,14 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.metrics import mean_absolute_error
 from sklearn.cluster import KMeans
 import joblib
-import os
 import json
 
+
+#NEW MODEL USING RANDOMISED SEARCH TO FIND BEST MODEL PARAMETERS 
 # Define Directories
 bike_dir = "/Users/shaneobrien/desktop/bike_data"
 weather_dir = "/Users/shaneobrien/desktop/weather_data"
@@ -71,82 +71,107 @@ if 'timestamp' in bike_df.columns and 'timestamp' in weather_df.columns:
     merged_df.drop(columns=[col for col in columns_to_drop if col in merged_df.columns], inplace=True)
     print(f"Merge successful! Merged data shape: {merged_df.shape}")
 
-    # Save merged dataset for reuse or inspection
+    # Save merged dataset
     merged_df.to_csv("merged_bike_weather_data.csv", index=False)
     print("Merged dataset saved to 'merged_bike_weather_data.csv'")
 
-    #add in lat and long for clustering this has helped create a better model as I can instead of creating a singlular model with high MAE or a model per station i group by coordinates and create a few models
+    # Add Station Coordinates
     station_info = pd.read_csv("/Users/shaneobrien/desktop/SE/station_info.csv")
     merged_df = pd.merge(merged_df, station_info[['number', 'latitude', 'longitude']], on='number', how='left')
     print("Added station latitude and longitude.")
-
 
     # Feature Engineering
     merged_df['hour'] = merged_df['timestamp'].dt.hour
     merged_df['day_of_week'] = merged_df['timestamp'].dt.dayofweek
     merged_df['is_weekend'] = merged_df['day_of_week'].isin([5, 6]).astype(int)
     merged_df['month'] = merged_df['timestamp'].dt.month
-    merged_df['is_peak_morning'] = merged_df['hour'].between(7, 10).astype(int)
-    merged_df['is_peak_evening'] = merged_df['hour'].between(16, 19).astype(int)
 
+    merged_df['lag_1'] = merged_df.groupby('number')['available_bikes'].shift(1)
+    merged_df['lag_2'] = merged_df.groupby('number')['available_bikes'].shift(2)
+    merged_df['lag_3'] = merged_df.groupby('number')['available_bikes'].shift(3)
 
-
-    # merged_df['lag_1'] = merged_df.groupby('number')['available_bikes'].shift(1)
-    # merged_df['lag_2'] = merged_df.groupby('number')['available_bikes'].shift(2)
-    # merged_df['lag_3'] = merged_df.groupby('number')['available_bikes'].shift(3)
-
-
-    # Cluster stations by latitude/longitude (assuming columns exist)
+    # Cluster stations
     if {'number', 'latitude', 'longitude'}.issubset(merged_df.columns):
         station_coords = merged_df.groupby('number')[['latitude', 'longitude']].mean().reset_index()
         kmeans = KMeans(n_clusters=5, random_state=42)
         station_coords['cluster'] = kmeans.fit_predict(station_coords[['latitude', 'longitude']])
         cluster_map = station_coords.set_index('number')['cluster'].to_dict()
         merged_df['cluster'] = merged_df['number'].map(cluster_map)
-        
 
-        #cluster mapping for prediction
         os.makedirs("models_per_cluster", exist_ok=True)
         with open("models_per_cluster/station_cluster_map.json", "w") as f:
             json.dump(cluster_map, f)
         print("Saved station → cluster mapping.")
 
-        #train a model for each cluster we have
+        # Hyperparameter Tuning Grid
+        param_grid = {
+            'n_estimators': [100, 200, 300],
+            'max_depth': [3, 5, 6, 8],
+            'learning_rate': [0.01, 0.05, 0.1, 0.2],
+            'subsample': [0.6, 0.8, 1.0],
+            'colsample_bytree': [0.6, 0.8, 1.0],
+            'gamma': [0, 0.1, 0.3],
+            'reg_alpha': [0, 0.1, 1],
+            'reg_lambda': [1, 1.5, 2]
+        }
+
+        param_cache_path = "models_per_cluster/best_params.json"
+        if os.path.exists(param_cache_path):
+            with open(param_cache_path, "r") as f:
+                best_params_dict = json.load(f)
+        else:
+            best_params_dict = {}
+
         for cluster_id in sorted(merged_df['cluster'].unique()):
+            print(f"\n--- Training model for Cluster {cluster_id} ---")
             cluster_df = merged_df[merged_df['cluster'] == cluster_id].copy()
             cluster_df.dropna(inplace=True)
 
-            features = ['hour', 'day_of_week', 'is_weekend', 'month', 'temperature', 'wind','is_peak_morning', 'is_peak_evening'] #removed lag features as I can use these for real time short term prediction with high accuracy but not for further into the future
+            features = ['hour', 'day_of_week', 'is_weekend', 'month', 'temperature', 'wind']
             if 'number' in cluster_df.columns:
                 features.append('number')
 
             X = cluster_df[features]
             y = cluster_df['available_bikes']
 
-
-            #at present using this for training is okay but from lectures we know using time based splits would be better
-           # X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle=True, test_size=0.2, random_state=42)
-
-            # Time-based split (train = past, test = future)
             split_idx = int(len(X) * 0.8)
             X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
             y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
 
-            xgb_model = XGBRegressor(n_estimators=200, max_depth=6, learning_rate=0.1, random_state=42)
+            if str(cluster_id) in best_params_dict:
+                print(f"Using cached hyperparameters for Cluster {cluster_id}")
+                best_params = best_params_dict[str(cluster_id)]
+            else:
+                print(f"Tuning hyperparameters for Cluster {cluster_id}...")
+                xgb_base = XGBRegressor(objective='reg:squarederror', random_state=42)
+                search = RandomizedSearchCV(
+                    estimator=xgb_base,
+                    param_distributions=param_grid,
+                    n_iter=25,
+                    cv=3,
+                    verbose=1,
+                    n_jobs=-1,
+                    scoring='neg_mean_absolute_error'
+                )
+                search.fit(X_train, y_train)
+                best_params = search.best_params_
+                best_params_dict[str(cluster_id)] = best_params
+
+                with open(param_cache_path, "w") as f:
+                    json.dump(best_params_dict, f, indent=2)
+
+            xgb_model = XGBRegressor(**best_params, random_state=42)
             xgb_model.fit(X_train, y_train)
 
             preds = xgb_model.predict(X_test)
             mae = mean_absolute_error(y_test, preds)
             print(f"Cluster {cluster_id} MAE: {mae:.2f}")
+
             joblib.dump({'model': xgb_model, 'features': features}, f'models_per_cluster/cluster_{cluster_id}.pkl')
 
-            #save errors
             errors = abs(preds - y_test)
             results_df = X_test.copy()
             results_df['actual'] = y_test.values
-            results_df['predicted'] = preds
-
-            results_df['actual'] = y_test
             results_df['predicted'] = preds
             results_df['error'] = errors
             high_error = results_df[results_df['error'] > 5]

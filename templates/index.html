@@ -33,22 +33,22 @@
     const auth = getAuth(app);
 
     // Monitor user login state
-    // onAuthStateChanged(auth, (user) => {
-    //     if (user) {
-    //         document.getElementById("user-info").innerHTML = `
-    //             <img src="${user.photoURL || 'images/default-avatar.png'}" alt="User Avatar" class="user-avatar">
-    //             <span class="user-name">${user.displayName}</span>
-    //             <button id="logout-btn" class="logout-btn">Logout</button>
-    //         `;
-    //         document.getElementById("logout-btn").addEventListener("click", function () {
-    //             signOut(auth).then(() => {
-    //                 window.location.href = "/login"; // Redirect to login page after logout
-    //             }).catch((error) => console.error("Logout failed:", error));
-    //         });
-    //     } else {
-    //         window.location.href = "/login"; // Redirect to login page if not logged in
-    //     }
-    // });
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById("user-info").innerHTML = `
+                <img src="${user.photoURL || 'images/default-avatar.png'}" alt="User Avatar" class="user-avatar">
+                <span class="user-name">${user.displayName}</span>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            `;
+            document.getElementById("logout-btn").addEventListener("click", function () {
+                signOut(auth).then(() => {
+                    window.location.href = "/login"; // Redirect to login page after logout
+                }).catch((error) => console.error("Logout failed:", error));
+            });
+        } else {
+            window.location.href = "/login"; // Redirect to login page if not logged in
+        }
+    });
 </script>
 
 

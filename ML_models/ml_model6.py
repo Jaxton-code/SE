@@ -220,28 +220,35 @@ if 'timestamp' in bike_df.columns and 'timestamp' in weather_df.columns:
             best_params_dict = {}
 
     for cluster_id in sorted(merged_df['time_cluster'].unique()):
-            print(f"\n--- Training model for Cluster {cluster_id} ---")
-            cluster_df = merged_df[merged_df['time_cluster'] == cluster_id].copy()
-            cluster_df.dropna(inplace=True)
+        print(f"\n--- Training model for Cluster {cluster_id} ---")
+        cluster_df = merged_df[merged_df['time_cluster'] == cluster_id].copy()
+        cluster_df.dropna(inplace=True)
 
-            features = ['hour', 'day_of_week', 'is_weekend', 'month', 'temperature', 'wind', 'is_peak_morning','is_peak_evening','weather_code','station_bike_capacity']
-            features += ['station_mean_bikes', 'station_std_bikes','avg_bikes_hour_dow','time_cluster']
-            if 'number' in cluster_df.columns:
-                features.append('number')
+        features = ['hour', 'day_of_week', 'is_weekend', 'month', 'temperature', 'wind', 'is_peak_morning','is_peak_evening','weather_code','station_bike_capacity']
+        features += ['station_mean_bikes', 'station_std_bikes','avg_bikes_hour_dow','time_cluster']
+        if 'number' in cluster_df.columns:
+            features.append('number')
 
-            X = cluster_df[features]
-            y = cluster_df['available_bikes']
+        X = cluster_df[features]
+        y = cluster_df['available_bikes']
 
-            split_idx = int(len(X) * 0.8)
-            X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
-            y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
+        tscv = TimeSeriesSplit(n_splits=5)
 
-           
+        mae_scores = []
+
+        fold_number = 1
+        for train_idx, test_idx in tscv.split(X):
+            print(f"\nTraining fold {fold_number}")
+
+            X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+            y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
+
+            # Load cached params or run randomized search
             if str(cluster_id) in best_params_dict:
                 print(f"Using cached hyperparameters for Cluster {cluster_id}")
                 best_params = best_params_dict[str(cluster_id)]
             else:
-                print(f"Tuning hyperparameters for Cluster {cluster_id}...")
+                print(f"Tuning hyperparameters for Cluster {cluster_id} (Fold {fold_number})...")
                 xgb_base = XGBRegressor(objective='reg:squarederror', random_state=42)
                 search = RandomizedSearchCV(
                     estimator=xgb_base,
@@ -259,22 +266,33 @@ if 'timestamp' in bike_df.columns and 'timestamp' in weather_df.columns:
                 with open(param_cache_path, "w") as f:
                     json.dump(best_params_dict, f, indent=2)
 
+            # Train XGB model
             xgb_model = XGBRegressor(**best_params, random_state=42)
             xgb_model.fit(X_train, y_train)
 
+            # Predict and evaluate
             preds = xgb_model.predict(X_test)
             mae = mean_absolute_error(y_test, preds)
-            print(f"Cluster {cluster_id} MAE: {mae:.2f}")
+            print(f"Fold {fold_number} MAE: {mae:.4f}")
+            mae_scores.append(mae)
 
-            joblib.dump({'model': xgb_model, 'features': features}, f'models_per_cluster/cluster_{cluster_id}.pkl')
+            fold_number += 1
 
-            errors = abs(preds - y_test)
-            results_df = X_test.copy()
-            results_df['actual'] = y_test.values
-            results_df['predicted'] = preds
-            results_df['error'] = errors
-            high_error = results_df[results_df['error'] > 5]
-            high_error.to_csv(f"models_per_cluster/high_error_cluster_{cluster_id}.csv", index=False)
+        # Average MAE across folds
+        average_mae = np.mean(mae_scores)
+        print(f"\nCluster {cluster_id} Average MAE across folds: {average_mae:.4f}")
+
+        # Save the final model trained on the entire dataset (last fold includes most data)
+        joblib.dump({'model': xgb_model, 'features': features}, f'models_per_cluster/cluster_{cluster_id}.pkl')
+
+        # Save high-error predictions from the last fold
+        errors = abs(preds - y_test)
+        results_df = X_test.copy()
+        results_df['actual'] = y_test.values
+        results_df['predicted'] = preds
+        results_df['error'] = errors
+        high_error = results_df[results_df['error'] > 5]
+        high_error.to_csv(f"models_per_cluster/high_error_cluster_{cluster_id}.csv", index=False)
 
             
 

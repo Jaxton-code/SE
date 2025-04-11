@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <title>BikeMap Dublin</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dublinbike.css') }}">
-    <div id="user-info" class="user-container"></div>
+    
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0c_tPCFVOTqCfC6hbjakRu2fHYEHA3_8"></script>
-    <script src="{{ url_for('static', filename='js/dublinbike.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/dublinbike.js') }}"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0c_tPCFVOTqCfC6hbjakRu2fHYEHA3_8&callback=initMap"> </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">s
 </head>
 
 <!-- Firebase -->
@@ -55,6 +56,7 @@
 
 
 <body>
+    <div id="user-info" class="user-container"></div>
 <header>
     <div class="header-container">
         <h1>BikeMap Dublin</h1>

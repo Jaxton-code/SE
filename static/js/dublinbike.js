@@ -1,9 +1,12 @@
-$(document).ready(function () {
+
     let map;
     let markers = [];
     let userMarker = null;
     let trendChartInstance;
-    let selectedStationNumber
+    let selectedStationNumber;
+    let directionService;
+    let directionsRenderer;
+
 
  
     console.log("JS loaded!");
@@ -24,7 +27,9 @@ $(document).ready(function () {
             zoom: 13,
             center: { lat: 53.3498, lng: -6.2603 }
         });
-
+        directionService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: true});
+        directionsRenderer.setMap(map)
         loadStations();
 
         loadWeather();
@@ -33,6 +38,36 @@ $(document).ready(function () {
         setInterval(loadWeather, 3600000);  // Refresh weather every hour
         setInterval(loadStations, 60000);  // Refresh stations every minute
     }
+
+    window.initMap = initMap;
+
+    function drawRouteToStation (stationLat , stationLng){
+        if (!userMarker){
+            alert("User location not found")
+            return;
+        
+        }
+        const origin = userMarker.getPosition();
+        const destination = new google.maps.LatLng(stationLat,stationLng);
+
+        const request = {
+            origin: origin,
+            destination: destination,
+            travelMode: google.maps.TravelMode.WALKING
+
+        }
+
+        directionService.route(request, function(result, status) {
+            if (status === google.maps.DirectionsStatus.OK) {
+                directionsRenderer.setDirections(result);
+            } else {
+                console.error("Directions request failed due to " + status);
+            }
+        });
+    }
+    
+
+
     let stations = []
     async function loadStations() {
         try {
@@ -140,7 +175,8 @@ $(document).ready(function () {
                     output.innerText = "Error getting prediction.";
                 });
         }); 
-        
+        drawRouteToStation(station.position_lat, station.position_lng);
+
     }
 
 
@@ -250,6 +286,7 @@ $(document).ready(function () {
             map.setCenter(nearestStation.getPosition());
             nearestStation.setAnimation(google.maps.Animation.BOUNCE);
             displayNearestStationDetail(nearestStationData, minDistance)
+            loadTrendChart(nearestStationData.name);
         }  else {
             console.log(" No nearest station found.");
         }
@@ -324,6 +361,8 @@ $(document).ready(function () {
         } catch (error) {
             console.error("Failed to load trend chart:", error);
         }
+    
+
     }
-    initMap()
-});
+
+ 

@@ -294,6 +294,20 @@ def get_station_trend(station_name):
     #     "values": values
     # })
 
+import threading
+import time
+
+def auto_snapshot():
+    while True:
+        try:
+            print("[AutoSnapshot] Saving live station data...")
+            response = requests.get(STATIONS_URI)
+            station_data = response.json()
+            save_snapshot(station_data)
+        except Exception as e:
+            print("[AutoSnapshot] Error saving snapshot:", e)
+        time.sleep(60)  # every 60 seconds
 
 if __name__ == '__main__':
+    threading.Thread(target=auto_snapshot, daemon=True).start()
     app.run(host='0.0.0.0', port=5000)

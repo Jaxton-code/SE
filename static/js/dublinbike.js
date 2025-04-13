@@ -64,6 +64,13 @@
                 console.error("Directions request failed due to " + status);
             }
         });
+
+        setTimeout(() => {
+            $('#cyclist').css('animation', 'cycleIn 3s ease-out forwards');
+        }, 300); // delay 0.3s
+        
+    
+     
     }
     
 
@@ -361,8 +368,5 @@
         } catch (error) {
             console.error("Failed to load trend chart:", error);
         }
-    
-
     }
-
- 
+  

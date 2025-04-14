@@ -12,7 +12,7 @@
     <script src="{{ url_for('static', filename='js/dublinbike.js') }}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0c_tPCFVOTqCfC6hbjakRu2fHYEHA3_8&callback=initMap"> </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">s
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 
 <!-- Firebase -->
@@ -59,6 +59,7 @@
     <div id="user-info" class="user-container"></div>
 <header>
     <div class="header-container">
+        <img src="{{ url_for('static', filename='images/bike.gif') }}" alt="Cyclist" class="cyclist" id="cyclist">
         <h1>BikeMap Dublin</h1>
         <img src="{{ url_for('static', filename='images/dublinbikes_logo.png') }}" alt="Dublin Bikes Logo" class="logo">
     </div>
@@ -96,6 +97,8 @@
     <!-- Map container -->
     <div class="map-container">
         <div id="map"></div>
+        <div id="cyclist" class="cyclist"></div>
+
     </div>
     <div class='chart-container'><h3>Availability Trend (last 24h)</h3>
         <canvas id="trendChart" height="150"></canvas></div>

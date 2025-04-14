@@ -180,8 +180,77 @@ chart-container{
 
 .chart-container h3 {
     margin-bottom: 15px;
-    color: #4a90e2;
+    color: hsl(212, 72%, 59%);
     text-align: center;
 }
+
+.cyclist {
+    position: absolute;
+    top: 5px; /* from top instead of bottom */
+    left: -100px; /* start off screen to the left */
+    width: 60px;
+    height: 60px;
+    background-image: url('../images/bike.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    z-index: 1001;
+    opacity: 0;
+}
+
+@keyframes cycleIn {
+    0% {
+        transform: translateX(-200px);
+        opacity: 0;
+    }
+    60% {
+        opacity: 1;
+    }
+
+    90% {
+        left: 50vw; /* almost all the way across the viewport */
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.map-container {
+    position: relative; /* ensure cyclist is positioned relative to the map */
+}
+
+.cyclist {
+    position: absolute;
+    bottom: 40px;
+    left: -80px; /* start off screen to the left */
+    width: 60px;
+    height: 60px;
+    background-image: url('../images/bike.gif'); /* adjust if path differs */
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 1001;
+    opacity: 0;
+}
+
+@keyframes cycleIn {
+    0% {
+        left: -80px;
+        opacity: 0;
+    }
+    25% {
+        opacity: 1;
+    }
+    75% {
+        left: 200px; /* adjust distance if needed */
+        opacity: 1;
+    }
+    100% {
+        left: 250px;
+        opacity: 0;
+    }
+}
+
 
 

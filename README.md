@@ -33,7 +33,7 @@ export FLASK_ENV=development
 ## 📌 Setup and Run
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/DublinBikesProject.git
+git clone https://github.com/Jaxton-code/DublinBikesProject.git
 cd DublinBikesProject
 ```
 ### 2️⃣ Run the backend API

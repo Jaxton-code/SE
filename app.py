@@ -36,7 +36,7 @@ with open("station_metadata.json", "r") as f:
     station_metadata = json.load(f)
 
 
-# Define the exact order of features expected by your model
+# Define the exact order of features expected by  model
 expected_feature_order = [
     'hour',
     'day_of_week',
@@ -265,6 +265,8 @@ def get_station_trend(station_name):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+    # # Simulated data for testing
     # labels = []
     # values = []
     # now = datetime.now()

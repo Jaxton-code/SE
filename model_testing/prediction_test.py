@@ -15,7 +15,7 @@ day_of_week = now.weekday()
 month = now.month
 
 
-# Step 2: Input from user
+# Step 2:  Simulate Input from user
 station_number = 83
 features_input = {
     "hour": hour,

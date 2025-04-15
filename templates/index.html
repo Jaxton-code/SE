@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BikeMap Dublin</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dublinbike.css') }}">
     
@@ -59,21 +61,23 @@
     <div id="user-info" class="user-container"></div>
 <header>
     <div class="header-container">
-        <img src="{{ url_for('static', filename='images/bike.gif') }}" alt="Cyclist" class="cyclist" id="cyclist">
         <h1>BikeMap Dublin</h1>
         <img src="{{ url_for('static', filename='images/dublinbikes_logo.png') }}" alt="Dublin Bikes Logo" class="logo">
     </div>
 </header>
 
+<!-- Cyclist animation outside containers -->
+<div id="cyclist" class="cyclist"></div>
+
 <div class="main-container">
-    <!-- Left sidebar -->
+    <!-- Left sidebar with top margin to make space for cyclist -->
     <div class="sidebar">
         <h2>Station & Weather Details</h2>
 
         <!-- Station details card -->
-        <div id="stationDetail" class="detail-card">
+        <div id="stationDetail" class="detail-card station-card">
             <h3>Station Details</h3>
-            <p>Select a station on the map to view details.</p>
+            <p class="instruction-text">Select a station on the map to view details.</p>
 
         </div>
        
@@ -82,11 +86,13 @@
 
 
         <!-- Weather info card -->
-        <div id="weatherInfo" class="detail-card">
+        <div id="weatherInfo" class="detail-card weather-card">
             <h3>Dublin Weather</h3>
+            <div class="weather-condition">
+                <strong>Condition:</strong> <span id="condition">Loading...</span>
+            </div>
             <p><strong>Temperature:</strong> <span id="temp">Loading...</span></p>
             <p><strong>Feels Like:</strong> <span id="tempFeel">Loading...</span></p>
-            <p><strong>Condition:</strong> <span id="condition">Loading...</span></p>
             <p><strong>Wind Speed:</strong> <span id="wind">Loading...</span></p>
             <p><strong>Cloud Coverage:</strong> <span id="clouds">Loading...</span></p>
             <p><strong>Sunrise:</strong> <span id="sunrise">Loading...</span></p>
@@ -97,12 +103,24 @@
     <!-- Map container -->
     <div class="map-container">
         <div id="map"></div>
-        <div id="cyclist" class="cyclist"></div>
-
     </div>
-    <div class='chart-container'><h3>Availability Trend (last 24h)</h3>
-        <canvas id="trendChart" height="150"></canvas></div>
+    <div class="right-side-content">
+        <div class='chart-container'>
+            <h3>Availability Trend (last 24h)</h3>
+            <canvas id="trendChart" height="150"></canvas>
+        </div>
+        <div class="info-card">
+            <h4>Dublin Bikes Tips</h4>
+            <ul>
+                <li>💡 Green markers show available bikes</li>
+                <li>⏱ Free to use for the first 30 minutes</li>
+                <li>🔄 Return bikes to any station</li>
+                <li>⚠️ Always check bike condition before use</li>
+            </ul>
+        </div>
+    </div>
 </div>
+
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+
 /* General Reset */
 * {
     margin: 0;
@@ -7,7 +8,7 @@
 }
 
 body {
-    background-color: #eaeaea;
+    background-color: #f6f8fa;
     color: #333;
     display: flex;
     flex-direction: column;
@@ -21,7 +22,7 @@ body {
 /* Header Styling */
 .header-container {
     width: 100%;
-    padding: 10px 20px;
+    padding: 12px 25px;
     background-color: #4a90e2;
     color: white;
     display: flex;
@@ -33,6 +34,7 @@ body {
 .header-container h1 {
     margin: 0;
     font-size: 2.5em;
+    font-weight: 700;
 }
 
 .logo {
@@ -44,60 +46,323 @@ body {
     display: flex;
     width: 100%;
     height: calc(100vh - 60px);
-    padding: 10px;
-    gap: 10px;
+    padding: 15px;
+    gap: 15px;
 }
 
 /* Sidebar Styling */
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 25%;
+    gap: 15px;
+    width: 27.5%;
+    min-width: 320px;
     height: 100%;
+    padding: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-top: 0;
+}
+
+/* Sidebar heading style - reduced size */
+.sidebar h2 {
+    margin: 0 0 10px 0; /* Reduced bottom margin from 15px to 10px */
+    font-size: 1.5em; /* Reduced from 1.8em */
+    color: #4a90e2;
+    padding-bottom: 8px; /* Reduced from 10px */
+    border-bottom: 2px solid #f0f4f8;
+}
+
+/* Detail Card */
+.detail-card {
+    flex: 1;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-/* Equal-height card style */
-.detail-card {
-    flex: 1;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
     overflow-y: auto;
+    margin-bottom: 15px;
+    border-left: 4px solid #4a90e2;
+    transition: all 0.3s ease;
 }
 
-/* Sidebar heading style */
-.sidebar h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.8em;
-    color: #4a90e2;
+.detail-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Specific styling for station card - with explicit height */
+.station-card {
+    border-left-color: #4a90e2;
+    flex: 1.67; /* Increased to balance with reduced weather card */
+    min-height: 0; /* Remove min-height restriction */
+}
+
+/* Specific styling for weather card - with explicit height */
+.weather-card {
+    border-left-color: #f39c12;
+    background-color: #fafeff;
+    flex: 1.33; /* Reduced by 1/3 from previous value (was 2) */
+    max-height: none; /* Remove max-height limitation */
+}
+
+/* Heading styles in cards */
 .detail-card h3 {
-    font-size: 1.4em;
     margin-bottom: 10px;
+    font-size: 1.4em;
     color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+/* Paragraph styling with reduced right padding */
+.detail-card p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    font-size: 1.05em;
+    padding-right: 10px;
+}
+
+/* Instruction text styling */
+.instruction-text {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Styling for strong elements - reduced right whitespace */
+.detail-card strong {
+    font-weight: 600;
+    color: #333;
+    display: inline-block;
+    min-width: 73px;
+}
+
+/* Styling for data values */
+.bikes-count, .stands-count {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #2ecc71;
+}
+
+.low-availability {
+    color: #e74c3c;
+}
+
+/* Weather condition styling */
+.weather-condition {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #eaeaea;
+}
+
+/* Predict container styling */
+.predict-container {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eaeaea;
+}
+
+/* Date input styling */
+.date-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+/* Predict button styling */
+.predict-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.predict-btn:hover {
+    background-color: #357abd;
 }
 
 /* Map Container */
 .map-container {
-    width: 75%;
+    width: 72.5%;
     height: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
 }
 
 #map {
     width: 100%;
     height: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
+}
+
+/* Update right side content container to allow positioning of child elements */
+.right-side-content {
+    display: flex;
+    flex-direction: column;
+    width: 33%;
+    margin: 15px auto 0 auto;
+    gap: 15px;
+    position: relative;
+    height: 100%;
+}
+
+/* Update info card styles - increase height and font size */
+.info-card {
+    width: 100%;
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px; /* Increased padding */
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #4a90e2;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 0;
+    height: auto; /* Allow natural height */
+    min-height: calc(2 * 160px); /* Approx double the original height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+}
+
+.info-card h4 {
+    color: #4a90e2;
+    margin-bottom: 15px; /* Increased margin */
+    font-size: 1.3em; /* Increased from 1.1em */
+}
+
+.info-card ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.info-card li {
+    padding: 8px 0; /* Increased padding */
+    font-size: 1.1em; /* Increased from 0.9em */
+    color: #555;
+    border-bottom: 1px dotted #eee;
+    line-height: 1.5; /* Better line spacing */
+}
+
+.info-card li:last-child {
+    border-bottom: none;
+}
+
+/* Update chart container styles */
+.chart-container {
+    width: 100%; /* Fill parent container */
+    padding: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.chart-container h3 {
+    margin-bottom: 15px;
+    color: #4a90e2;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 266px;
+}
+
+/* User Info Section */
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-name {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Improved logout button with better contrast */
+.logout-btn {
+    background-color: rgba(231, 76, 60, 0.8); /* Red background with transparency */
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+    font-weight: 600; /* Make text bolder */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+}
+
+.logout-btn:hover {
+    background-color: rgba(231, 76, 60, 1); /* Full opacity on hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px); /* Slight lift effect */
+}
+
+/* Cyclist animation - positioned above the sidebar */
+.cyclist {
+    position: absolute;
+    top: 20px; /* Position directly under header */
+    left: 15px;
+    width: 60px;
+    height: 60px;
+    background-image: url('../images/bike.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 1001;
+    opacity: 0;
+}
+
+/* Animation adjusted to move horizontally above sidebar */
+@keyframes cycleIn {
+    0% {
+        left: 15px;
+        opacity: 0;
+    }
+    25% {
+        opacity: 1;
+        left: 80px;
+    }
+    75% {
+        opacity: 1;
+        left: 280px;
+    }
+    100% {
+        left: 350px;
+        opacity: 0;
+    }
 }
 
 /* Responsive Design */
@@ -118,137 +383,8 @@ body {
     }
 
     .detail-card {
-        padding: 10px;
+        padding: 15px;
         height: auto;
-    }
-}
-
-/* User Info Section */
-.user-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #4a90e2;
-}
-
-.user-name {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #4a90e2;
-}
-
-.logout-btn {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-.logout-btn:hover {
-    background-color: #e60000;
-}
-
-chart-container{
-    width: 90%;
-    max-width: 1000px;
-    margin: 20px auto;
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.chart-container canvas {
-    width: auto !important;
-    height: 60% !important;
-}
-
-
-
-
-.chart-container h3 {
-    margin-bottom: 15px;
-    color: hsl(212, 72%, 59%);
-    text-align: center;
-}
-
-.cyclist {
-    position: absolute;
-    top: 5px; /* from top instead of bottom */
-    left: -100px; /* start off screen to the left */
-    width: 60px;
-    height: 60px;
-    background-image: url('../images/bike.gif');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-color: transparent;
-    z-index: 1001;
-    opacity: 0;
-}
-
-@keyframes cycleIn {
-    0% {
-        transform: translateX(-200px);
-        opacity: 0;
-    }
-    60% {
-        opacity: 1;
-    }
-
-    90% {
-        left: 50vw; /* almost all the way across the viewport */
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.map-container {
-    position: relative; /* ensure cyclist is positioned relative to the map */
-}
-
-.cyclist {
-    position: absolute;
-    bottom: 40px;
-    left: -80px; /* start off screen to the left */
-    width: 60px;
-    height: 60px;
-    background-image: url('../images/bike.gif'); /* adjust if path differs */
-    background-size: contain;
-    background-repeat: no-repeat;
-    z-index: 1001;
-    opacity: 0;
-}
-
-@keyframes cycleIn {
-    0% {
-        left: -80px;
-        opacity: 0;
-    }
-    25% {
-        opacity: 1;
-    }
-    75% {
-        left: 200px; /* adjust distance if needed */
-        opacity: 1;
-    }
-    100% {
-        left: 250px;
-        opacity: 0;
     }
 }
 
